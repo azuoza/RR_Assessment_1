@@ -94,8 +94,8 @@ aggr.ends <- aggregate(.~interval,
                        mean)
 aggr.ends$days <- "Weekends"
 
-aggr.melt <- merge(aggr.days, aggr.ends, by="interval")
-aggr.melt <- aggr.melt[, c(-3, -6)]
+# aggr.melt <- merge(aggr.days, aggr.ends, by="interval")
+# aggr.melt <- aggr.melt[, c(-3, -6)]
 
 aggr.melt <- data.frame(interval = rep(NA, times=576), steps=NA, date=NA, days=NA)
 for(i in 1:dim(aggr.days)[1]){
@@ -124,3 +124,6 @@ legend("topright",
        legend=c("Weekday", "Weekend"), 
        col=1:2, 
        lty=1)
+
+fig2 <- ggplot(data=aggr.melt, aes(x=interval, y=steps)) + geom_line()
+fig2 + facet_grid(days ~ .)

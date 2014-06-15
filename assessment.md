@@ -49,7 +49,7 @@ axis(1, at = c(0, 300, 600, 900, 1200, 1500, 1800, 2100, 2400), lab = time.int)
 axis(2, at = c(0, 50, 100, 150, 200))
 ```
 
-![plot of chunk unnamed-chunk-1](figure/unnamed-chunk-1.png) 
+![plot of chunk steps.mean.plot](figure/steps_mean_plot.png) 
 
 
 Calculating maximum number of steps on average across all the day.
@@ -163,8 +163,35 @@ aggr.ends <- aggregate(. ~ interval, data = subset(x = dt.no.na, subset = dt.no.
     "Weekend"), mean)
 aggr.ends$days <- "Weekends"
 
+# adding all together
+
+aggr.melt <- data.frame(interval = rep(NA, times = 576), steps = NA, date = NA, 
+    days = NA)
+for (i in 1:dim(aggr.days)[1]) {
+    aggr.melt[2 * i - 1, ] <- aggr.days[i, ]
+    aggr.melt[2 * i, ] <- aggr.ends[i, ]
+}
+
+aggr.melt$days <- as.factor(aggr.melt$days)
+
 # ploting
 
+library(ggplot2)
+
+fig2 <- ggplot(data = aggr.melt, aes(x = interval, y = steps)) + geom_line()
+fig2 + facet_grid(days ~ .)
+```
+
+![plot of chunk weekends](figure/weekends.png) 
+
+
+We can see that at the weekend there are more activity in the middle of the day. Meanwhile on the workdays main activity is in the morning and in the evening. 
+
+
+**In my opinion** this figure (optional) better shows workday/weekend trends
+
+
+```r
 plot(x = aggr.days$interval, y = aggr.days$steps, type = "l", axes = F, xlab = "time interval", 
     ylab = "number of steps")
 axis(1, at = c(0, 300, 600, 900, 1200, 1500, 1800, 2100, 2400), lab = time.int)
@@ -174,7 +201,5 @@ box()
 legend("topright", legend = c("Weekday", "Weekend"), col = 1:2, lty = 1)
 ```
 
-![plot of chunk weekends](figure/weekends.png) 
+![plot of chunk weekends2](figure/weekends2.png) 
 
-
-We can see that at the weekend there are more activity in the middle of the day. Meanwhile on the workdays main activity is in the morning and in the evening. 

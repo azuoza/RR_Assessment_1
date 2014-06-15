@@ -33,7 +33,7 @@ The meadian of steps taken per day is `r s.median`.
 
 Ploting average number of steps per day.
 
-```{r}
+```{r steps.mean.plot}
 
 dt.aggr.2 <- aggregate(.~interval, data=dt, mean)
 time.int <- c("0:00", "3:00", "6:00", "9:00", "12:00",
@@ -157,8 +157,31 @@ aggr.ends <- aggregate(.~interval,
                        mean)
 aggr.ends$days <- "Weekends"
 
+# adding all together 
+
+aggr.melt <- data.frame(interval = rep(NA, times=576), steps=NA, date=NA, days=NA)
+for(i in 1:dim(aggr.days)[1]){
+    aggr.melt[2*i-1, ] <- aggr.days[i, ]
+    aggr.melt[2*i, ] <- aggr.ends[i, ]
+}
+
+aggr.melt$days <- as.factor(aggr.melt$days)
+
 # ploting 
 
+library(ggplot2)
+
+fig2 <- ggplot(data=aggr.melt, aes(x=interval, y=steps)) + geom_line()
+fig2 + facet_grid(days ~ .)
+
+```
+
+We can see that at the weekend there are more activity in the middle of the day. Meanwhile on the workdays main activity is in the morning and in the evening. 
+
+
+**In my opinion** this figure (optional) better shows workday/weekend trends
+
+``` {r weekends2, fig.width=8, fig.height=6}
 plot(
     x=aggr.days$interval, 
     y=aggr.days$steps, 
@@ -176,5 +199,3 @@ legend("topright",
        col=1:2, 
        lty=1)
 ```
-
-We can see that at the weekend there are more activity in the middle of the day. Meanwhile on the workdays main activity is in the morning and in the evening. 
